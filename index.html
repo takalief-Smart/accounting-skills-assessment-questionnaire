@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استبيان المستوى الحالي للمتدرب</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SheetJS -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1e4a3b 0%, #2d6a4e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .main-header {
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 50px 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-bottom: 3px solid #52b788;
+        }
+        
+        .company-badge {
+            background: rgba(82, 183, 136, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            border: 1px solid #52b788;
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-bottom: 2rem;
+            background-color: #f8faf8;
+            border: 1px solid #e4f2e4;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #1e4a3b 0%, #2d6a4e 100%);
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-bottom: 2px solid #52b788;
+        }
+        
+        .btn-custom {
+            background: #52b788;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            background: #2d6a4e;
+            transform: scale(1.05);
+            color: white;
+        }
+        
+        .btn-excel {
+            background: #1e4a3b;
+            color: white;
+            border: 2px solid #52b788;
+        }
+        
+        .btn-excel:hover {
+            background: #2d6a4e;
+            color: white;
+        }
+        
+        .btn-pdf {
+            background: #4a6b5a;
+            color: white;
+            border: 2px solid #52b788;
+        }
+        
+        .form-label {
+            color: #2d6a4e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e4f2e4;
+            border-radius: 10px;
+            padding: 0.75rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #52b788;
+            box-shadow: 0 0 0 0.2rem rgba(82, 183, 136, 0.25);
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e4f2e4;
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-color: #52b788;
+        }
+        
+        .section-title {
+            color: #1e4a3b;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #52b788;
+            display: inline-block;
+        }
+        
+        .section-title i {
+            color: #52b788;
+            margin-left: 10px;
+        }
+        
+        .info-box {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #52b788;
+        }
+        
+        .declaration-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.2rem;
+            border: 1px solid #dee2e6;
+            margin-top: 1.5rem;
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-right: 4px;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+            border-radius: 50px 50px 0 0;
+            border-top: 3px solid #52b788;
+        }
+        
+        .footer-links {
+            color: #e4f2e4;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links:hover {
+            color: #52b788;
+        }
+        
+        .contact-item {
+            margin-bottom: 10px;
+            color: #e4f2e4;
+        }
+        
+        .contact-item i {
+            color: #52b788;
+            margin-left: 10px;
+            width: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(82, 183, 136, 0.2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            color: #52b788;
+            transition: all 0.3s ease;
+            border: 1px solid #52b788;
+        }
+        
+        .social-icon:hover {
+            background: #52b788;
+            color: #0e3b2c;
+            transform: translateY(-3px);
+        }
+        
+        .nav-tabs-custom {
+            border-bottom: 3px solid #52b788;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #1e4a3b 0%, #2d6a4e 100%);
+            border-radius: 50px;
+            padding: 0.5rem;
+        }
+        
+        .nav-tabs-custom .nav-link {
+            color: white !important;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs-custom .nav-link i {
+            color: white;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+            color: #1e4a3b !important;
+            background: #52b788;
+            border: 2px solid white;
+        }
+        
+        .preview-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 2px solid #52b788;
+            margin-bottom: 1.5rem;
+        }
+        
+        .preview-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed #e4f2e4;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .preview-label {
+            font-weight: 600;
+            color: #1e4a3b;
+            width: 45%;
+        }
+        
+        .preview-value {
+            color: #2d6a4e;
+            width: 55%;
+            text-align: left;
+        }
+        
+        .skill-level {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .level-beginner {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .level-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .level-advanced {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .level-expert {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        #pdf-export-container {
+            position: fixed;
+            top: -99999px;
+            left: -99999px;
+            width: 800px;
+            background: white;
+            z-index: 9999;
+            padding: 30px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .pdf-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            direction: rtl;
+        }
+        
+        .pdf-cover {
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .pdf-section-title {
+            color: #1e4a3b;
+            font-size: 20px;
+            font-weight: 800;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #52b788;
+        }
+        
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+            border: 1px solid #52b788;
+        }
+        
+        .pdf-table th {
+            background: #1e4a3b;
+            color: white;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .pdf-table td {
+            padding: 6px;
+            border: 1px solid #e4f2e4;
+            text-align: center;
+        }
+        
+        .pdf-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        
+        .course-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #52b788;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white;
+                padding: 0;
+            }
+            .card, .section-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="main-header text-center no-print">
+        <div class="container">
+            <span class="company-badge mb-3">
+                <i class="fas fa-chalkboard-user me-2"></i>تكاليف | حلول أعمال ذكية
+            </span>
+            <h1 class="display-4 fw-bold mt-3" style="color: white;">
+                <i class="fas fa-chart-line me-3"></i>
+                استبيان المستوى الحالي للمتدرب
+            </h1>
+            <p class="lead" style="color: white;">تقييم المستوى الحالي لتحديد المسار التدريبي المناسب</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs-custom nav-fill" id="myTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="data-entry-tab" data-bs-toggle="tab" data-bs-target="#dataEntry" type="button" role="tab">
+                    <i class="fas fa-edit me-2"></i> استبيان المعلومات
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview" type="button" role="tab">
+                    <i class="fas fa-eye me-2"></i> معاينة التقرير
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Tab 1: Data Entry -->
+            <div class="tab-pane fade show active" id="dataEntry" role="tabpanel">
+                <!-- بيانات المتدرب الشخصية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-user-graduate"></i> البيانات الشخصية</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">الاسم الثلاثي</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="مثال: أحمد محمد علي">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">الرقم القومي</label>
+                            <input type="text" class="form-control" id="nationalId" placeholder="الرقم القومي">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" id="email" placeholder="example@gmail.com">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">رقم الهاتف</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="01234567890">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">المدينة / المنطقة</label>
+                            <input type="text" class="form-control" id="city" placeholder="المدينة أو المنطقة">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">العنوان بالتفصيل</label>
+                            <input type="text" class="form-control" id="address" placeholder="الشارع - المنطقة - المدينة">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المؤهل العلمي -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-graduation-cap"></i> المؤهل العلمي</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">المؤهل الدراسي</label>
+                            <select class="form-select" id="qualification">
+                                <option value="">اختر المؤهل</option>
+                                <option value="ليسانس تجارة - محاسبة">ليسانس تجارة - محاسبة</option>
+                                <option value="ليسانس تجارة - إدارة أعمال">ليسانس تجارة - إدارة أعمال</option>
+                                <option value="ليسانس تجارة - شعبة عامة">ليسانس تجارة - شعبة عامة</option>
+                                <option value="بكالوريوس محاسبة">بكالوريوس محاسبة</option>
+                                <option value="بكالوريوس إدارة أعمال">بكالوريوس إدارة أعمال</option>
+                                <option value="دبلوم محاسبة">دبلوم محاسبة</option>
+                                <option value="ماجستير محاسبة">ماجستير محاسبة</option>
+                                <option value="ماجستير إدارة أعمال">ماجستير إدارة أعمال</option>
+                                <option value="دكتوراه محاسبة">دكتوراه محاسبة</option>
+                                <option value="ثانوية عامة - تجاري">ثانوية عامة - تجاري</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">اسم الجامعة / المعهد</label>
+                            <input type="text" class="form-control" id="university" placeholder="اسم الجامعة أو المعهد">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">سنة التخرج</label>
+                            <input type="text" class="form-control" id="graduationYear" placeholder="مثال: 2024">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">التقدير العام</label>
+                            <select class="form-select" id="grade">
+                                <option value="">اختر التقدير</option>
+                                <option value="ممتاز">ممتاز</option>
+                                <option value="جيد جداً">جيد جداً</option>
+                                <option value="جيد">جيد</option>
+                                <option value="مقبول">مقبول</option>
+                                <option value="لم يتخرج بعد">لم يتخرج بعد</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3" id="otherQualificationDiv" style="display: none;">
+                            <label class="form-label">يرجى تحديد المؤهل الآخر</label>
+                            <input type="text" class="form-control" id="otherQualification" placeholder="اذكر المؤهل العلمي">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الشهادات المهنية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-certificate"></i> الشهادات المهنية</h3>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">هل لديك أي شهادات مهنية؟</label>
+                            <select class="form-select" id="hasProfessionalCert">
+                                <option value="لا">لا</option>
+                                <option value="نعم">نعم</option>
+                            </select>
+                        </div>
+                        <div id="certificatesSection" style="display: none;">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">الشهادات المهنية الحاصلة عليها</label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="CMA" id="certCMA">
+                                            <label class="form-check-label" for="certCMA">CMA</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="CPA" id="certCPA">
+                                            <label class="form-check-label" for="certCPA">CPA</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="ACCA" id="certACCA">
+                                            <label class="form-check-label" for="certACCA">ACCA</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="CFA" id="certCFA">
+                                            <label class="form-check-label" for="certCFA">CFA</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="CIA" id="certCIA">
+                                            <label class="form-check-label" for="certCIA">CIA</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="CFM" id="certCFM">
+                                            <label class="form-check-label" for="certCFM">CFM</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="SOCPA" id="certSOCPA">
+                                            <label class="form-check-label" for="certSOCPA">SOCPA</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="أخرى" id="certOther">
+                                            <label class="form-check-label" for="certOther">أخرى</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3" id="otherCertDiv" style="display: none;">
+                                <label class="form-label">يرجى ذكر الشهادات الأخرى</label>
+                                <input type="text" class="form-control" id="otherCertificates" placeholder="اذكر الشهادات المهنية الأخرى">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الخبرة العملية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-briefcase"></i> الخبرة العملية</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">إجمالي سنوات الخبرة</label>
+                            <input type="number" class="form-control" id="totalExperience" placeholder="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">الوضع الوظيفي الحالي</label>
+                            <select class="form-select" id="employmentStatus">
+                                <option value="">اختر</option>
+                                <option value="طالب / لم ألتحق بالعمل بعد">طالب / لم ألتحق بالعمل بعد</option>
+                                <option value="حديث التخرج - أبحث عن عمل">حديث التخرج - أبحث عن عمل</option>
+                                <option value="محاسب مبتدئ">محاسب مبتدئ</option>
+                                <option value="مساعد محاسب">مساعد محاسب</option>
+                                <option value="محاسب">محاسب</option>
+                                <option value="محاسب أول">محاسب أول</option>
+                                <option value="مدير حسابات">مدير حسابات</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3" id="otherJobDiv" style="display: none;">
+                            <label class="form-label">يرجى تحديد المسمى الوظيفي الآخر</label>
+                            <input type="text" class="form-control" id="otherJobTitle" placeholder="المسمى الوظيفي">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">جهة العمل الحالية (إن وجدت)</label>
+                            <input type="text" class="form-control" id="currentEmployer" placeholder="اسم الشركة أو المؤسسة">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">المهام والمسؤوليات الحالية</label>
+                            <textarea class="form-control" id="currentResponsibilities" rows="2" placeholder="صف بإيجاز المهام التي تقوم بها حالياً"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تقييم المهارات المحاسبية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-calculator"></i> تقييم المهارات المحاسبية</h3>
+                    <div class="info-box mb-3">
+                        <i class="fas fa-info-circle text-success me-2"></i>
+                        <strong>ملاحظة:</strong> يرجى تقييم مستواك في كل مجال (1 = مبتدئ، 5 = خبير)
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">المبادئ المحاسبية الأساسية</label>
+                            <select class="form-select" id="accountingPrinciples">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف الأساسيات)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (أعرف القيود اليومية)</option>
+                                <option value="3 - متوسط">3 - متوسط (أفهم الدورة المحاسبية)</option>
+                                <option value="4 - متقدم">4 - متقدم (تحليل مالي)</option>
+                                <option value="5 - خبير">5 - خبير (مدرب ومؤهل)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">المعايير المحاسبية (IFRS)</label>
+                            <select class="form-select" id="ifrsKnowledge">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (مفاهيم أساسية)</option>
+                                <option value="3 - متوسط">3 - متوسط (أعرف المعايير الرئيسية)</option>
+                                <option value="4 - متقدم">4 - متقدم (تطبيق المعايير)</option>
+                                <option value="5 - خبير">5 - خبير (استشارات)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">إعداد القوائم المالية</label>
+                            <select class="form-select" id="financialStatements">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (أعرف مكوناتها)</option>
+                                <option value="3 - متوسط">3 - متوسط (أستطيع إعدادها)</option>
+                                <option value="4 - متقدم">4 - متقدم (إعداد وتحليل)</option>
+                                <option value="5 - خبير">5 - خبير (مراجعة)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">إدارة الحسابات (مدينون/دائنون)</label>
+                            <select class="form-select" id="accountsManagement">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (مفاهيم أساسية)</option>
+                                <option value="3 - متوسط">3 - متوسط (إدارة يومية)</option>
+                                <option value="4 - متقدم">4 - متقدم (تسوية وتحليل)</option>
+                                <option value="5 - خبير">5 - خبير (سياسات ائتمانية)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">التسويات البنكية</label>
+                            <select class="form-select" id="bankReconciliation">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (مفهوم أساسي)</option>
+                                <option value="3 - متوسط">3 - متوسط (أستطيع إجراؤها)</option>
+                                <option value="4 - متقدم">4 - متقدم (تسوية متقدمة)</option>
+                                <option value="5 - خبير">5 - خبير (مراجعة)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">إدارة المخزون</label>
+                            <select class="form-select" id="inventoryManagement">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (مفاهيم أساسية)</option>
+                                <option value="3 - متوسط">3 - متوسط (تسجيل ومراجعة)</option>
+                                <option value="4 - متقدم">4 - متقدم (تقييم وتحليل)</option>
+                                <option value="5 - خبير">5 - خبير (سياسات مخزون)</option>
+                                <option value="غير مطبق">غير مطبق</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">إعداد كشوف المرتبات والأجور</label>
+                            <select class="form-select" id="payroll">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (مفاهيم أساسية)</option>
+                                <option value="3 - متوسط">3 - متوسط (أستطيع إعدادها)</option>
+                                <option value="4 - متقدم">4 - متقدم (إعداد وتحليل)</option>
+                                <option value="5 - خبير">5 - خبير (سياسات رواتب)</option>
+                                <option value="غير مطبق">غير مطبق</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">الضرائب</label>
+                            <select class="form-select" id="taxKnowledge">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (لا أعرف)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (مفاهيم أساسية)</option>
+                                <option value="3 - متوسط">3 - متوسط (أعرف القوانين الأساسية)</option>
+                                <option value="4 - متقدم">4 - متقدم (حساب الضريبة)</option>
+                                <option value="5 - خبير">5 - خبير (تخطيط ضريبي)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المهارات التقنية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-laptop-code"></i> المهارات التقنية</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Microsoft Excel</label>
+                            <select class="form-select" id="excelSkills">
+                                <option value="">اختر المستوى</option>
+                                <option value="1 - مبتدئ">1 - مبتدئ (إدخال بيانات، تنسيق بسيط)</option>
+                                <option value="2 - مبتدئ متقدم">2 - مبتدئ متقدم (معادلات بسيطة، جداول)</option>
+                                <option value="3 - متوسط">3 - متوسط (Pivot Tables، دوال بحث)</option>
+                                <option value="4 - متقدم">4 - متقدم (ماكرو، دوال متقدمة)</option>
+                                <option value="5 - خبير">5 - خبير (VBA، نماذج متقدمة)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">برامج المحاسبة</label>
+                            <select class="form-select" id="accountingSoftware">
+                                <option value="">اختر المستوى</option>
+                                <option value="لا أعرف">لا أعرف</option>
+                                <option value="أعرف أساسيات QuickBooks">أعرف أساسيات QuickBooks</option>
+                                <option value="أعرف أساسيات برامج محاسبية">أعرف أساسيات برامج محاسبية</option>
+                                <option value="خبرة جيدة في برنامج محاسبي">خبرة جيدة في برنامج محاسبي</option>
+                                <option value="خبرة في أنظمة ERP متكاملة">خبرة في أنظمة ERP متكاملة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">اذكر البرامج التي تتقنها</label>
+                            <input type="text" class="form-control" id="otherSoftware" placeholder="مثال: SAP، Oracle، Odoo، Zoho Books">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الدورات التدريبية السابقة -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-chalkboard"></i> الدورات التدريبية السابقة</h3>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">هل سبق لك الالتحاق بدورات تدريبية في المحاسبة أو الضرائب؟</label>
+                            <select class="form-select" id="hasPreviousCourses">
+                                <option value="لا">لا</option>
+                                <option value="نعم">نعم</option>
+                            </select>
+                        </div>
+                        <div id="coursesSection" style="display: none;">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">اذكر الدورات التي التحقت بها</label>
+                                <textarea class="form-control" id="previousCourses" rows="2" placeholder="مثال: دورة أساسيات المحاسبة، دورة Excel المتقدم"></textarea>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">جهة تقديم الدورة</label>
+                                <input type="text" class="form-control" id="courseProvider" placeholder="اسم المركز أو المنصة">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- أهداف التدريب -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-bullseye"></i> أهداف التدريب والتوقعات</h3>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">ما هي المجالات التي ترغب في تطويرها؟ (اختر كل ما يناسب)</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="المبادئ المحاسبية" id="goalPrinciples">
+                                        <label class="form-check-label" for="goalPrinciples">المبادئ المحاسبية</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="المعايير المحاسبية (IFRS)" id="goalIfrs">
+                                        <label class="form-check-label" for="goalIfrs">المعايير المحاسبية (IFRS)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="إعداد القوائم المالية" id="goalStatements">
+                                        <label class="form-check-label" for="goalStatements">إعداد القوائم المالية</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Excel للمحاسبين" id="goalExcel">
+                                        <label class="form-check-label" for="goalExcel">Excel للمحاسبين</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="برامج المحاسبة" id="goalSoftware">
+                                        <label class="form-check-label" for="goalSoftware">برامج المحاسبة</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="الضرائب" id="goalTax">
+                                        <label class="form-check-label" for="goalTax">الضرائب</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="ضريبة القيمة المضافة" id="goalVat">
+                                        <label class="form-check-label" for="goalVat">ضريبة القيمة المضافة</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="ضريبة الدخل" id="goalIncomeTax">
+                                        <label class="form-check-label" for="goalIncomeTax">ضريبة الدخل</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="إدارة الرواتب" id="goalPayroll">
+                                        <label class="form-check-label" for="goalPayroll">إدارة الرواتب</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="التحليل المالي" id="goalAnalysis">
+                                        <label class="form-check-label" for="goalAnalysis">التحليل المالي</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="المهارات الناعمة للمحاسبين" id="goalSoftSkills">
+                                        <label class="form-check-label" for="goalSoftSkills">المهارات الناعمة للمحاسبين</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="أخرى" id="goalOther">
+                                        <label class="form-check-label" for="goalOther">أخرى</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3" id="otherGoalDiv" style="display: none;">
+                            <label class="form-label">يرجى تحديد الأهداف الأخرى</label>
+                            <input type="text" class="form-control" id="otherGoalText" placeholder="اذكر الأهداف الأخرى">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">ما الذي تتوقع تحقيقه من خلال هذه الدورة؟</label>
+                            <textarea class="form-control" id="trainingExpectations" rows="2" placeholder="اذكر توقعاتك من الدورة التدريبية"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- معلومات تقنية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-microchip"></i> المعلومات التقنية</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">هل لديك جهاز كمبيوتر / لاب توب؟</label>
+                            <select class="form-select" id="hasDevice">
+                                <option value="">اختر</option>
+                                <option value="نعم - لاب توب">نعم - لاب توب</option>
+                                <option value="نعم - كمبيوتر مكتبي">نعم - كمبيوتر مكتبي</option>
+                                <option value="نعم - جهاز لوحي (تابلت)">نعم - جهاز لوحي (تابلت)</option>
+                                <option value="لا">لا</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">هل لديك اتصال إنترنت؟</label>
+                            <select class="form-select" id="hasInternet">
+                                <option value="">اختر</option>
+                                <option value="نعم - عالي السرعة">نعم - عالي السرعة</option>
+                                <option value="نعم - متوسط">نعم - متوسط</option>
+                                <option value="نعم - منخفض">نعم - منخفض</option>
+                                <option value="لا">لا</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">الوقت المناسب للمتابعة</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="صباحاً (9ص - 12م)" id="timeMorning">
+                                        <label class="form-check-label" for="timeMorning">صباحاً (9ص - 12م)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="بعد الظهر (1م - 5م)" id="timeAfternoon">
+                                        <label class="form-check-label" for="timeAfternoon">بعد الظهر (1م - 5م)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="مساءً (6م - 10م)" id="timeEvening">
+                                        <label class="form-check-label" for="timeEvening">مساءً (6م - 10م)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- معلومات إضافية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> معلومات إضافية</h3>
+                    <div class="mb-3">
+                        <label class="form-label">أي معلومات إضافية قد تساعد في تخصيص الدورة التدريبية</label>
+                        <textarea class="form-control" id="additionalInfo" rows="3" placeholder="مثال: احتياجات خاصة، استفسارات، ملاحظات أخرى..."></textarea>
+                    </div>
+                </div>
+
+                <!-- إقرار وتوقيع -->
+                <div class="declaration-box">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="declarationCheck">
+                                <label class="form-check-label" for="declarationCheck">
+                                    أقر بأن جميع البيانات المقدمة في هذا الاستبيان صحيحة وكاملة، وأوافق على استخدامها لغرض تقييم مستواي وتحديد المسار التدريبي المناسب.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">اسم المتدرب</label>
+                            <input type="text" class="form-control" id="declarantName" placeholder="الاسم الكامل">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" class="form-control" id="declarationDate" value="2026-03-25">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 mb-4">
+                    <button class="btn btn-custom btn-lg" onclick="refreshPreview()"><i class="fas fa-sync-alt me-2"></i> تحديث المعاينة</button>
+                    <button class="btn btn-custom btn-lg mx-2" onclick="resetForm()"><i class="fas fa-undo me-2"></i> إعادة تعيين</button>
+                </div>
+            </div>
+
+            <!-- Tab 2: Preview -->
+            <div class="tab-pane fade" id="preview" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-file-alt me-2"></i> معاينة تقرير المستوى الحالي للمتدرب</div>
+                    <div class="card-body" id="previewContent"></div>
+                </div>
+                <div class="text-center mb-4 no-print">
+                    <button class="btn btn-excel btn-lg mx-2" onclick="exportToExcel()"><i class="fas fa-file-excel me-2"></i> تصدير (Excel)</button>
+                    <button class="btn btn-pdf btn-lg mx-2" onclick="exportToPDF(event)"><i class="fas fa-file-pdf me-2"></i> تصدير التقرير (PDF)</button>
+                    <button class="btn btn-custom btn-lg mx-2" onclick="window.print()"><i class="fas fa-print me-2"></i> طباعة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer no-print">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 style="color: #52b788;">تكاليف - حلول أعمال ذكية</h5>
+                    <p style="color: #e4f2e4;">نقدم حلولاً متكاملة لتطوير المهارات المهنية للمحاسبين.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 style="color: #52b788;"><i class="fas fa-address-card me-2"></i>معلومات الاتصال</h5>
+                    <div class="contact-item"><i class="fas fa-map-marker-alt"></i> القاهرة</div>
+                    <div class="contact-item"><i class="fas fa-phone-alt"></i><a href="tel:+201044391177" class="footer-links">+20 104 439 1177</a></div>
+                    <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:info@takalief.com" class="footer-links">info@takalief.com</a></div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 style="color: #52b788;"><i class="fas fa-share-alt me-2"></i>تابعنا على</h5>
+                    <div class="text-center">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-3">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0" style="color: #e4f2e4;"><i class="fas fa-copyright me-2" style="color: #52b788;"></i>2026 تكاليف - جميع الحقوق محفوظة</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="pdf-export-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // ============================================
+        // نموذج مرجعي - استبيان المستوى الحالي للمتدرب
+        // ============================================
+        
+        // عناصر التحكم في الحقول الديناميكية
+        document.getElementById('qualification').addEventListener('change', function() {
+            document.getElementById('otherQualificationDiv').style.display = this.value === 'أخرى' ? 'block' : 'none';
+        });
+        
+        document.getElementById('employmentStatus').addEventListener('change', function() {
+            document.getElementById('otherJobDiv').style.display = this.value === 'أخرى' ? 'block' : 'none';
+        });
+        
+        document.getElementById('goalOther').addEventListener('change', function() {
+            document.getElementById('otherGoalDiv').style.display = this.checked ? 'block' : 'none';
+        });
+        
+        function toggleCertificates() {
+            var hasCert = document.getElementById('hasProfessionalCert').value;
+            document.getElementById('certificatesSection').style.display = hasCert === 'نعم' ? 'block' : 'none';
+        }
+        document.getElementById('hasProfessionalCert').addEventListener('change', toggleCertificates);
+        
+        document.getElementById('certOther').addEventListener('change', function() {
+            document.getElementById('otherCertDiv').style.display = this.checked ? 'block' : 'none';
+        });
+        
+        function toggleCourses() {
+            var hasCourses = document.getElementById('hasPreviousCourses').value;
+            document.getElementById('coursesSection').style.display = hasCourses === 'نعم' ? 'block' : 'none';
+        }
+        document.getElementById('hasPreviousCourses').addEventListener('change', toggleCourses);
+        
+        // دوال مساعدة لاسترجاع القيم
+        function getFieldValue(id, defaultValue = '—') {
+            var element = document.getElementById(id);
+            return element && element.value.trim() !== '' ? element.value.trim() : defaultValue;
+        }
+        
+        function getCheckboxValues(prefix) {
+            var values = [];
+            document.querySelectorAll('input[type="checkbox"][id^="' + prefix + '"]').forEach(cb => {
+                if (cb.checked && cb.value) values.push(cb.value);
+            });
+            return values;
+        }
+        
+        function getCertificates() {
+            var certs = [];
+            ['certCMA', 'certCPA', 'certACCA', 'certCFA', 'certCIA', 'certCFM', 'certSOCPA'].forEach(id => {
+                if (document.getElementById(id)?.checked) certs.push(document.getElementById(id).value);
+            });
+            if (document.getElementById('certOther')?.checked) {
+                var otherText = document.getElementById('otherCertificates')?.value;
+                if (otherText) certs.push(otherText);
+            }
+            return certs;
+        }
+        
+        function getGoals() {
+            var goals = [];
+            ['goalPrinciples', 'goalIfrs', 'goalStatements', 'goalExcel', 'goalSoftware', 'goalTax', 'goalVat', 'goalIncomeTax', 'goalPayroll', 'goalAnalysis', 'goalSoftSkills'].forEach(id => {
+                if (document.getElementById(id)?.checked) goals.push(document.getElementById(id).value);
+            });
+            if (document.getElementById('goalOther')?.checked) {
+                var otherText = document.getElementById('otherGoalText')?.value;
+                if (otherText) goals.push(otherText);
+            }
+            return goals;
+        }
+        
+        function getTimePreferences() {
+            var times = [];
+            if (document.getElementById('timeMorning')?.checked) times.push('صباحاً');
+            if (document.getElementById('timeAfternoon')?.checked) times.push('بعد الظهر');
+            if (document.getElementById('timeEvening')?.checked) times.push('مساءً');
+            return times;
+        }
+        
+        function getSkillLevelClass(value) {
+            if (value.includes('1')) return 'level-beginner';
+            if (value.includes('2')) return 'level-intermediate';
+            if (value.includes('3')) return 'level-intermediate';
+            if (value.includes('4')) return 'level-advanced';
+            if (value.includes('5')) return 'level-expert';
+            return '';
+        }
+        
+        // تحديث المعاينة
+        function refreshPreview() {
+            var goals = getGoals();
+            var certs = getCertificates();
+            var times = getTimePreferences();
+            
+            var previewHtml = `
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-user-graduate me-2"></i>البيانات الشخصية</h4>
+                    <div class="preview-item"><span class="preview-label">الاسم الثلاثي</span><span class="preview-value">${getFieldValue('fullName')}</span></div>
+                    <div class="preview-item"><span class="preview-label">الرقم القومي</span><span class="preview-value">${getFieldValue('nationalId')}</span></div>
+                    <div class="preview-item"><span class="preview-label">البريد الإلكتروني</span><span class="preview-value">${getFieldValue('email')}</span></div>
+                    <div class="preview-item"><span class="preview-label">رقم الهاتف</span><span class="preview-value">${getFieldValue('phone')}</span></div>
+                    <div class="preview-item"><span class="preview-label">المدينة / المنطقة</span><span class="preview-value">${getFieldValue('city')}</span></div>
+                    <div class="preview-item"><span class="preview-label">العنوان</span><span class="preview-value">${getFieldValue('address')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-graduation-cap me-2"></i>المؤهل العلمي</h4>
+                    <div class="preview-item"><span class="preview-label">المؤهل الدراسي</span><span class="preview-value">${getFieldValue('qualification')}${getFieldValue('otherQualification') ? ' (' + getFieldValue('otherQualification') + ')' : ''}</span></div>
+                    <div class="preview-item"><span class="preview-label">الجامعة / المعهد</span><span class="preview-value">${getFieldValue('university')}</span></div>
+                    <div class="preview-item"><span class="preview-label">سنة التخرج</span><span class="preview-value">${getFieldValue('graduationYear')}</span></div>
+                    <div class="preview-item"><span class="preview-label">التقدير العام</span><span class="preview-value">${getFieldValue('grade')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-certificate me-2"></i>الشهادات المهنية</h4>
+                    <div class="preview-item"><span class="preview-label">الشهادات الحاصلة عليها</span><span class="preview-value">${certs.length > 0 ? certs.join('، ') : 'لا يوجد'}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-briefcase me-2"></i>الخبرة العملية</h4>
+                    <div class="preview-item"><span class="preview-label">سنوات الخبرة</span><span class="preview-value">${getFieldValue('totalExperience')} سنوات</span></div>
+                    <div class="preview-item"><span class="preview-label">الوضع الوظيفي</span><span class="preview-value">${getFieldValue('employmentStatus')}${getFieldValue('otherJobTitle') ? ' (' + getFieldValue('otherJobTitle') + ')' : ''}</span></div>
+                    <div class="preview-item"><span class="preview-label">جهة العمل</span><span class="preview-value">${getFieldValue('currentEmployer')}</span></div>
+                    <div class="preview-item"><span class="preview-label">المهام والمسؤوليات</span><span class="preview-value">${getFieldValue('currentResponsibilities')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-calculator me-2"></i>تقييم المهارات المحاسبية</h4>
+                    <div class="preview-item"><span class="preview-label">المبادئ المحاسبية</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('accountingPrinciples'))}">${getFieldValue('accountingPrinciples')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">المعايير المحاسبية (IFRS)</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('ifrsKnowledge'))}">${getFieldValue('ifrsKnowledge')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">إعداد القوائم المالية</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('financialStatements'))}">${getFieldValue('financialStatements')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">إدارة الحسابات</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('accountsManagement'))}">${getFieldValue('accountsManagement')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">التسويات البنكية</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('bankReconciliation'))}">${getFieldValue('bankReconciliation')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">إدارة المخزون</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('inventoryManagement'))}">${getFieldValue('inventoryManagement')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">إعداد كشوف المرتبات</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('payroll'))}">${getFieldValue('payroll')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">الضرائب</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('taxKnowledge'))}">${getFieldValue('taxKnowledge')}</span></span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-laptop-code me-2"></i>المهارات التقنية</h4>
+                    <div class="preview-item"><span class="preview-label">Microsoft Excel</span><span class="preview-value"><span class="skill-level ${getSkillLevelClass(getFieldValue('excelSkills'))}">${getFieldValue('excelSkills')}</span></span></div>
+                    <div class="preview-item"><span class="preview-label">برامج المحاسبة</span><span class="preview-value">${getFieldValue('accountingSoftware')}</span></div>
+                    <div class="preview-item"><span class="preview-label">برامج أخرى</span><span class="preview-value">${getFieldValue('otherSoftware')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-chalkboard me-2"></i>الدورات التدريبية السابقة</h4>
+                    <div class="preview-item"><span class="preview-label">التحق بدورات سابقة</span><span class="preview-value">${getFieldValue('hasPreviousCourses')}</span></div>
+                    ${getFieldValue('hasPreviousCourses') === 'نعم' ? `<div class="preview-item"><span class="preview-label">الدورات السابقة</span><span class="preview-value">${getFieldValue('previousCourses')}</span></div>` : ''}
+                    ${getFieldValue('hasPreviousCourses') === 'نعم' ? `<div class="preview-item"><span class="preview-label">جهة التقديم</span><span class="preview-value">${getFieldValue('courseProvider')}</span></div>` : ''}
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-bullseye me-2"></i>أهداف التدريب والتوقعات</h4>
+                    <div class="preview-item"><span class="preview-label">المجالات الراغب في تطويرها</span><span class="preview-value">${goals.length > 0 ? goals.join('، ') : '—'}</span></div>
+                    <div class="preview-item"><span class="preview-label">توقعات من الدورة</span><span class="preview-value">${getFieldValue('trainingExpectations')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-microchip me-2"></i>المعلومات التقنية</h4>
+                    <div class="preview-item"><span class="preview-label">الجهاز المتاح</span><span class="preview-value">${getFieldValue('hasDevice')}</span></div>
+                    <div class="preview-item"><span class="preview-label">جودة الإنترنت</span><span class="preview-value">${getFieldValue('hasInternet')}</span></div>
+                    <div class="preview-item"><span class="preview-label">الوقت المناسب للمتابعة</span><span class="preview-value">${times.length > 0 ? times.join('، ') : '—'}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-info-circle me-2"></i>معلومات إضافية</h4>
+                    <div class="preview-item"><span class="preview-label">ملاحظات إضافية</span><span class="preview-value">${getFieldValue('additionalInfo')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-signature me-2"></i>الإقرار والتوقيع</h4>
+                    <div class="preview-item"><span class="preview-label">اسم المتدرب</span><span class="preview-value">${getFieldValue('declarantName')}</span></div>
+                    <div class="preview-item"><span class="preview-label">التاريخ</span><span class="preview-value">${getFieldValue('declarationDate')}</span></div>
+                    <div class="preview-item"><span class="preview-label">حالة الإقرار</span><span class="preview-value">${document.getElementById('declarationCheck').checked ? '✓ تم الإقرار' : 'لم يتم الإقرار'}</span></div>
+                </div>
+                
+                <div class="preview-card text-center">
+                    <hr>
+                    <p style="color: #1e4a3b; font-weight: 600;"><i class="fas fa-check-circle me-2"></i>تم تعبئة استبيان المستوى الحالي للمتدرب بنجاح</p>
+                    <p class="text-muted small">تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG')}</p>
+                </div>
+            `;
+            document.getElementById('previewContent').innerHTML = previewHtml;
+        }
+        
+        function resetForm() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟')) location.reload();
+        }
+        
+        function exportToExcel() {
+            var traineeName = getFieldValue('fullName', 'متدرب');
+            var goals = getGoals();
+            var certs = getCertificates();
+            var times = getTimePreferences();
+            
+            var excelData = [
+                ['استبيان المستوى الحالي للمتدرب'],
+                ['تاريخ التقرير', new Date().toLocaleDateString('ar-EG')],
+                ['اسم المتدرب', traineeName],
+                ['الرقم القومي', getFieldValue('nationalId')],
+                [],
+                ['1. البيانات الشخصية'],
+                ['الاسم الثلاثي', getFieldValue('fullName')],
+                ['الرقم القومي', getFieldValue('nationalId')],
+                ['البريد الإلكتروني', getFieldValue('email')],
+                ['رقم الهاتف', getFieldValue('phone')],
+                ['المدينة / المنطقة', getFieldValue('city')],
+                ['العنوان', getFieldValue('address')],
+                [],
+                ['2. المؤهل العلمي'],
+                ['المؤهل الدراسي', getFieldValue('qualification') + (getFieldValue('otherQualification') ? ' (' + getFieldValue('otherQualification') + ')' : '')],
+                ['الجامعة / المعهد', getFieldValue('university')],
+                ['سنة التخرج', getFieldValue('graduationYear')],
+                ['التقدير العام', getFieldValue('grade')],
+                [],
+                ['3. الشهادات المهنية'],
+                ['الشهادات', certs.length > 0 ? certs.join('، ') : 'لا يوجد'],
+                [],
+                ['4. الخبرة العملية'],
+                ['سنوات الخبرة', getFieldValue('totalExperience') + ' سنوات'],
+                ['الوضع الوظيفي', getFieldValue('employmentStatus') + (getFieldValue('otherJobTitle') ? ' (' + getFieldValue('otherJobTitle') + ')' : '')],
+                ['جهة العمل', getFieldValue('currentEmployer')],
+                ['المهام والمسؤوليات', getFieldValue('currentResponsibilities')],
+                [],
+                ['5. تقييم المهارات المحاسبية'],
+                ['المبادئ المحاسبية', getFieldValue('accountingPrinciples')],
+                ['المعايير المحاسبية (IFRS)', getFieldValue('ifrsKnowledge')],
+                ['إعداد القوائم المالية', getFieldValue('financialStatements')],
+                ['إدارة الحسابات', getFieldValue('accountsManagement')],
+                ['التسويات البنكية', getFieldValue('bankReconciliation')],
+                ['إدارة المخزون', getFieldValue('inventoryManagement')],
+                ['إعداد كشوف المرتبات', getFieldValue('payroll')],
+                ['الضرائب', getFieldValue('taxKnowledge')],
+                [],
+                ['6. المهارات التقنية'],
+                ['Microsoft Excel', getFieldValue('excelSkills')],
+                ['برامج المحاسبة', getFieldValue('accountingSoftware')],
+                ['برامج أخرى', getFieldValue('otherSoftware')],
+                [],
+                ['7. الدورات التدريبية السابقة'],
+                ['التحق بدورات سابقة', getFieldValue('hasPreviousCourses')],
+                ...(getFieldValue('hasPreviousCourses') === 'نعم' ? [['الدورات السابقة', getFieldValue('previousCourses')], ['جهة التقديم', getFieldValue('courseProvider')]] : []),
+                [],
+                ['8. أهداف التدريب'],
+                ['المجالات الراغب في تطويرها', goals.join('، ')],
+                ['توقعات من الدورة', getFieldValue('trainingExpectations')],
+                [],
+                ['9. المعلومات التقنية'],
+                ['الجهاز المتاح', getFieldValue('hasDevice')],
+                ['جودة الإنترنت', getFieldValue('hasInternet')],
+                ['الوقت المناسب للمتابعة', times.join('، ')],
+                [],
+                ['10. معلومات إضافية'],
+                ['ملاحظات إضافية', getFieldValue('additionalInfo')],
+                [],
+                ['11. الإقرار والتوقيع'],
+                ['اسم المتدرب', getFieldValue('declarantName')],
+                ['التاريخ', getFieldValue('declarationDate')],
+                ['حالة الإقرار', document.getElementById('declarationCheck').checked ? 'تم الإقرار' : 'لم يتم الإقرار']
+            ];
+            
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet(excelData);
+            XLSX.utils.book_append_sheet(wb, ws, 'المستوى الحالي للمتدرب');
+            XLSX.writeFile(wb, `Trainee_Level_${traineeName.replace(/\s/g, '_')}_${new Date().toISOString().slice(0,10)}.xlsx`);
+            alert('تم تصدير استبيان Excel بنجاح!');
+        }
+        
+        async function exportToPDF(event) {
+            try {
+                var exportBtn = event.target;
+                var originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> جاري إعداد التقرير...';
+                exportBtn.disabled = true;
+                
+                var pdfContainer = document.getElementById('pdf-export-container');
+                pdfContainer.innerHTML = '';
+                pdfContainer.style.opacity = '1';
+                pdfContainer.style.position = 'absolute';
+                pdfContainer.style.top = '0';
+                pdfContainer.style.left = '0';
+                pdfContainer.style.zIndex = '9999';
+                
+                var traineeName = getFieldValue('fullName', 'غير محدد');
+                var currentDate = new Date().toLocaleDateString('ar-EG');
+                var goals = getGoals();
+                var certs = getCertificates();
+                var times = getTimePreferences();
+                
+                var fullHtml = `
+                    <div class="pdf-cover">
+                        <h1>استبيان المستوى الحالي للمتدرب</h1>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 30px;">
+                            <p><i class="fas fa-user-graduate me-2"></i>المتدرب: ${traineeName}</p>
+                            <p><i class="fas fa-envelope me-2"></i>البريد الإلكتروني: ${getFieldValue('email')}</p>
+                            <p><i class="fas fa-phone me-2"></i>رقم الهاتف: ${getFieldValue('phone')}</p>
+                            <p><i class="fas fa-calendar me-2"></i>تاريخ التقرير: ${currentDate}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="pdf-section-title">1. البيانات الشخصية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>الاسم الثلاثي</strong></td><td>${getFieldValue('fullName')}</td></tr>
+                            <tr><td style="text-align:right"><strong>الرقم القومي</strong></td><td>${getFieldValue('nationalId')}</td></tr>
+                            <tr><td style="text-align:right"><strong>البريد الإلكتروني</strong></td><td>${getFieldValue('email')}</td></tr>
+                            <tr><td style="text-align:right"><strong>رقم الهاتف</strong></td><td>${getFieldValue('phone')}</td></tr>
+                            <tr><td style="text-align:right"><strong>المدينة / المنطقة</strong></td><td>${getFieldValue('city')}</td></tr>
+                            <tr><td style="text-align:right"><strong>العنوان</strong></td><td>${getFieldValue('address')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">2. المؤهل العلمي</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>المؤهل الدراسي</strong></td><td>${getFieldValue('qualification')}${getFieldValue('otherQualification') ? ' (' + getFieldValue('otherQualification') + ')' : ''}</td></tr>
+                            <tr><td style="text-align:right"><strong>الجامعة / المعهد</strong></td><td>${getFieldValue('university')}</td></tr>
+                            <tr><td style="text-align:right"><strong>سنة التخرج</strong></td><td>${getFieldValue('graduationYear')}</td></tr>
+                            <tr><td style="text-align:right"><strong>التقدير العام</strong></td><td>${getFieldValue('grade')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">3. الشهادات المهنية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>الشهادات</strong></td><td>${certs.length > 0 ? certs.join('، ') : 'لا يوجد'}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">4. الخبرة العملية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>سنوات الخبرة</strong></td><td>${getFieldValue('totalExperience')} سنوات</td></tr>
+                            <tr><td style="text-align:right"><strong>الوضع الوظيفي</strong></td><td>${getFieldValue('employmentStatus')}${getFieldValue('otherJobTitle') ? ' (' + getFieldValue('otherJobTitle') + ')' : ''}</td></tr>
+                            <tr><td style="text-align:right"><strong>جهة العمل</strong></td><td>${getFieldValue('currentEmployer')}</td></tr>
+                            <tr><td style="text-align:right"><strong>المهام والمسؤوليات</strong></td><td>${getFieldValue('currentResponsibilities')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">5. تقييم المهارات المحاسبية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>المبادئ المحاسبية</strong></td><td>${getFieldValue('accountingPrinciples')}</td></tr>
+                            <tr><td style="text-align:right"><strong>المعايير المحاسبية (IFRS)</strong></td><td>${getFieldValue('ifrsKnowledge')}</td></tr>
+                            <tr><td style="text-align:right"><strong>إعداد القوائم المالية</strong></td><td>${getFieldValue('financialStatements')}</td></tr>
+                            <tr><td style="text-align:right"><strong>إدارة الحسابات</strong></td><td>${getFieldValue('accountsManagement')}</td></tr>
+                            <tr><td style="text-align:right"><strong>التسويات البنكية</strong></td><td>${getFieldValue('bankReconciliation')}</td></tr>
+                            <tr><td style="text-align:right"><strong>إدارة المخزون</strong></td><td>${getFieldValue('inventoryManagement')}</td></tr>
+                            <tr><td style="text-align:right"><strong>إعداد كشوف المرتبات</strong></td><td>${getFieldValue('payroll')}</td></tr>
+                            <tr><td style="text-align:right"><strong>الضرائب</strong></td><td>${getFieldValue('taxKnowledge')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">6. المهارات التقنية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>Microsoft Excel</strong></td><td>${getFieldValue('excelSkills')}</td></tr>
+                            <tr><td style="text-align:right"><strong>برامج المحاسبة</strong></td><td>${getFieldValue('accountingSoftware')}</td></tr>
+                            <tr><td style="text-align:right"><strong>برامج أخرى</strong></td><td>${getFieldValue('otherSoftware')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">7. الدورات التدريبية السابقة</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>التحق بدورات سابقة</strong></td><td>${getFieldValue('hasPreviousCourses')}</td></tr>
+                            ${getFieldValue('hasPreviousCourses') === 'نعم' ? `<tr><td style="text-align:right"><strong>الدورات السابقة</strong></td><td>${getFieldValue('previousCourses')}</td></tr>` : ''}
+                            ${getFieldValue('hasPreviousCourses') === 'نعم' ? `<tr><td style="text-align:right"><strong>جهة التقديم</strong></td><td>${getFieldValue('courseProvider')}</td></tr>` : ''}
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">8. أهداف التدريب</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>المجالات الراغب في تطويرها</strong></td><td>${goals.join('، ') || '—'}</td></tr>
+                            <tr><td style="text-align:right"><strong>توقعات من الدورة</strong></td><td>${getFieldValue('trainingExpectations')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">9. المعلومات التقنية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>الجهاز المتاح</strong></td><td>${getFieldValue('hasDevice')}</td></tr>
+                            <tr><td style="text-align:right"><strong>جودة الإنترنت</strong></td><td>${getFieldValue('hasInternet')}</td></tr>
+                            <tr><td style="text-align:right"><strong>الوقت المناسب للمتابعة</strong></td><td>${times.join('، ') || '—'}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">10. معلومات إضافية</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>ملاحظات إضافية</strong></td><td>${getFieldValue('additionalInfo')}</td></tr>
+                        </tbody></table>
+                        
+                        <h2 class="pdf-section-title">11. الإقرار والتوقيع</h2>
+                        <table class="pdf-table"><tbody>
+                            <tr><td style="text-align:right"><strong>اسم المتدرب</strong></td><td>${getFieldValue('declarantName')}</td></tr>
+                            <tr><td style="text-align:right"><strong>التاريخ</strong></td><td>${getFieldValue('declarationDate')}</td></tr>
+                            <tr><td style="text-align:right"><strong>حالة الإقرار</strong></td><td>${document.getElementById('declarationCheck').checked ? 'تم الإقرار' : 'لم يتم الإقرار'}</td></tr>
+                        </tbody></table>
+                    </div>
+                    <div style="page-break-before: always; margin-top: 40px;">
+                        <div class="pdf-footer">
+                            <div style="font-size: 20px; font-weight: 700; color: #52b788;">تكاليف - حلول أعمال ذكية</div>
+                            <hr style="width: 150px; margin: 15px auto;">
+                            <p>تم تعبئة هذا الاستبيان لتقييم المستوى الحالي للمتدرب</p>
+                            <p>تاريخ الإصدار: ${currentDate}</p>
+                            <p style="margin-top: 20px;">توقيع المتدرب: _________________________</p>
+                            <p>جميع الحقوق محفوظة © 2026</p>
+                        </div>
+                    </div>
+                `;
+                
+                var pdfWrapper = document.createElement('div');
+                pdfWrapper.className = 'pdf-wrapper';
+                pdfWrapper.innerHTML = fullHtml;
+                pdfContainer.appendChild(pdfWrapper);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                var canvas = await html2canvas(pdfContainer, { scale: 2, backgroundColor: '#ffffff', logging: false });
+                var imgData = canvas.toDataURL('image/png');
+                var imgWidth = 210;
+                var pageHeight = 297;
+                var imgHeight = (canvas.height * imgWidth) / canvas.width;
+                var heightLeft = imgHeight;
+                var position = 0;
+                
+                var pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+                heightLeft -= pageHeight;
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+                    heightLeft -= pageHeight;
+                }
+                
+                pdf.save(`Trainee_Level_${traineeName.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+                
+                pdfContainer.innerHTML = '';
+                pdfContainer.style.opacity = '0';
+                pdfContainer.style.position = 'fixed';
+                pdfContainer.style.top = '-99999px';
+                
+                exportBtn.innerHTML = originalText;
+                exportBtn.disabled = false;
+                alert('تم تصدير استبيان PDF بنجاح!');
+            } catch (error) {
+                alert('حدث خطأ: ' + error.message);
+                var exportBtn = event.target;
+                exportBtn.innerHTML = '<i class="fas fa-file-pdf me-2"></i> تصدير التقرير (PDF)';
+                exportBtn.disabled = false;
+            }
+        }
+        
+        window.onload = function() {
+            refreshPreview();
+        };
+    </script>
+</body>
+</html>
